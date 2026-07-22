@@ -1,4 +1,9 @@
-from .manager import add_task, get_tasks_sorted
+from .manager import (
+    add_task,
+    complete_task,
+    delete_task,
+    get_tasks_sorted,
+)
 
 
 def show_menu() -> None:
@@ -7,7 +12,9 @@ def show_menu() -> None:
     print("=== Study Task Manager ===")
     print("1. Add task")
     print("2. Show tasks")
-    print("3. Exit")
+    print("3. Complete task")
+    print("4. Delete task")
+    print("5. Exit")
 
 
 def add_task_interactively() -> None:
@@ -35,7 +42,7 @@ def add_task_interactively() -> None:
         print(f"Error: {error}")
 
 
-def show_tasks() -> None:
+def show_tasks() -> bool:
     """Display all tasks sorted by deadline."""
     tasks = get_tasks_sorted()
 
@@ -44,7 +51,7 @@ def show_tasks() -> None:
 
     if not tasks:
         print("No tasks found.")
-        return
+        return False
 
     for number, task in enumerate(tasks, start=1):
         status = "Completed" if task.completed else "Pending"
@@ -56,6 +63,46 @@ def show_tasks() -> None:
             f"{task.deadline} - "
             f"{status}"
         )
+
+    return True
+
+
+def complete_task_interactively() -> None:
+    """Ask the user which task should be completed."""
+    if not show_tasks():
+        return
+
+    task_number_text = input("Task number to complete: ")
+
+    try:
+        task_number = int(task_number_text)
+        task = complete_task(task_number)
+
+        print()
+        print("Task marked as completed.")
+        print(f"{task.course} - {task.title}")
+
+    except ValueError as error:
+        print(f"Error: {error}")
+
+
+def delete_task_interactively() -> None:
+    """Ask the user which task should be deleted."""
+    if not show_tasks():
+        return
+
+    task_number_text = input("Task number to delete: ")
+
+    try:
+        task_number = int(task_number_text)
+        task = delete_task(task_number)
+
+        print()
+        print("Task deleted successfully.")
+        print(f"{task.course} - {task.title}")
+
+    except ValueError as error:
+        print(f"Error: {error}")
 
 
 def main() -> None:
@@ -72,11 +119,20 @@ def main() -> None:
             show_tasks()
 
         elif choice == "3":
+            complete_task_interactively()
+
+        elif choice == "4":
+            delete_task_interactively()
+
+        elif choice == "5":
             print("Goodbye!")
             break
 
         else:
-            print("Invalid choice. Please select 1, 2, or 3.")
+            print(
+                "Invalid choice. "
+                "Please select a number from 1 to 5."
+            )
 
 
 if __name__ == "__main__":

@@ -79,3 +79,35 @@ def get_tasks_sorted(
             "%Y-%m-%d",
         ),
     )
+def complete_task(
+    task_number: int,
+    data_file: Path = DEFAULT_DATA_FILE,
+) -> Task:
+    """Mark a task as completed using its displayed number."""
+    tasks = get_tasks_sorted(data_file)
+
+    if not 1 <= task_number <= len(tasks):
+        raise ValueError("Task number is out of range.")
+
+    task = tasks[task_number - 1]
+    task.completed = True
+
+    save_tasks(tasks, data_file)
+
+    return task
+
+
+def delete_task(
+    task_number: int,
+    data_file: Path = DEFAULT_DATA_FILE,
+) -> Task:
+    """Delete a task using its displayed number."""
+    tasks = get_tasks_sorted(data_file)
+
+    if not 1 <= task_number <= len(tasks):
+        raise ValueError("Task number is out of range.")
+
+    deleted_task = tasks.pop(task_number - 1)
+    save_tasks(tasks, data_file)
+
+    return deleted_task
